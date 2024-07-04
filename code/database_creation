@@ -1,0 +1,582 @@
+CREATE TABLE COVID_19_cases_and_deaths_2020_2022(
+	date date,
+	county varchar(50),
+	state varchar(30),
+	fips varchar(5),
+	cases numeric,
+	deaths numeric
+);
+
+SELECT * FROM COVID_19_cases_and_deaths_2020_2022
+
+-- Import and append COVID Cases and Deaths data 
+--2020
+-- DROP TABLE temp_year_2020
+CREATE TEMPORARY TABLE temp_year_2020 (
+	date date,
+	county varchar(50),
+	state varchar(30),
+	fips varchar(5),
+	cases numeric,
+	deaths numeric
+);
+COPY temp_year_2020 (date,county,state,fips,cases,deaths)
+	FROM '/Users/thomas/Documents/School/INST123/Team Project/COVID-19_Cases_and_Deaths_in_the_United_States_County_2020.txt'
+	WITH (FORMAT CSV, HEADER)
+
+--2021
+CREATE TEMPORARY TABLE temp_year_2021 (
+	date date,
+	county varchar(50),
+	state varchar(30),
+	fips varchar(5),
+	cases numeric,
+	deaths numeric
+);
+COPY temp_year_2021 (date,county,state,fips,cases,deaths)
+	FROM '/Users/thomas/Documents/School/INST123/Team Project/COVID-19_Cases_and_Deaths_in_the_United_States_County_2021.txt'
+	WITH (FORMAT CSV, HEADER)
+	
+--2022
+CREATE TEMPORARY TABLE temp_year_2022 (
+	date date,
+	county varchar(50),
+	state varchar(30),
+	fips varchar(5),
+	cases numeric,
+	deaths numeric
+);
+COPY temp_year_2022 (date,county,state,fips,cases,deaths)
+	FROM '/Users/thomas/Documents/School/INST123/Team Project/COVID-19_Cases_and_Deaths_in_the_United_States_County_2022.txt'
+	WITH (FORMAT CSV, HEADER)
+
+INSERT INTO COVID_19_cases_and_deaths_2020_2022 (date,county,state,fips,cases,deaths)
+	SELECT * FROM temp_year_2020
+UNION
+	SELECT * FROM temp_year_2021
+UNION 
+	SELECT * FROM temp_year_2022
+	
+SELECT * FROM COVID_19_cases_and_deaths_2020_2022
+
+-- SELECT * FROM COVID_19_cases_and_deaths_2020_2022
+-- 	WHERE deaths IS NULL
+_________________________________________________________________________________________________________________________
+-- Import and append COVID Vaccination Data
+
+CREATE TEMPORARY TABLE temp_vaccinations (
+Date date,
+FIPS varchar(5),
+MMWR_week numeric,
+Recip_County varchar(50),
+Recip_State varchar(30),
+Completeness_pct numeric,
+Administered_Dose1_Recip numeric,
+Administered_Dose1_Pop_Pct numeric,
+Administered_Dose1_Recip_5Plus numeric,
+Administered_Dose1_Recip_5PlusPop_Pct numeric,
+Administered_Dose1_Recip_12Plus numeric,
+Administered_Dose1_Recip_12PlusPop_Pct numeric,
+Administered_Dose1_Recip_18Plus numeric,
+Administered_Dose1_Recip_18PlusPop_Pct numeric,
+Administered_Dose1_Recip_65Plus numeric,
+Administered_Dose1_Recip_65PlusPop_Pct numeric,
+Series_Complete_Yes numeric,
+Series_Complete_Pop_Pct numeric,
+Series_Complete_5Plus numeric,
+Series_Complete_5PlusPop_Pct numeric,
+Series_Complete_5to17 numeric,
+Series_Complete_5to17Pop_Pct numeric,
+Series_Complete_12Plus numeric,
+Series_Complete_12PlusPop_Pct numeric,
+Series_Complete_18Plus numeric,
+Series_Complete_18PlusPop_Pct numeric,
+Series_Complete_65Plus numeric,
+Series_Complete_65PlusPop_Pct numeric,
+Booster_Doses numeric,
+Booster_Doses_Vax_Pct numeric,
+Booster_Doses_12Plus numeric,
+Booster_Doses_12Plus_Vax_Pct numeric,
+Booster_Doses_18Plus numeric,
+Booster_Doses_18Plus_Vax_Pct numeric,
+Booster_Doses_50Plus numeric,
+Booster_Doses_50Plus_Vax_Pct numeric,
+Booster_Doses_65Plus numeric,
+Booster_Doses_65Plus_Vax_Pct numeric,
+SVI_CTGY varchar(1),
+Series_Complete_Pop_Pct_SVI numeric,
+Series_Complete_5PlusPop_Pct_SVI numeric,
+Series_Complete_5to17Pop_Pct_SVI numeric,
+Series_Complete_12PlusPop_Pct_SVI numeric,
+Series_Complete_18PlusPop_Pct_SVI numeric,
+Series_Complete_65PlusPop_Pct_SVI numeric,
+Metro_status varchar(10),
+Series_Complete_Pop_Pct_UR_Equity numeric,
+Series_Complete_5PlusPop_Pct_UR_Equity numeric,
+Series_Complete_5to17Pop_Pct_UR_Equity numeric,
+Series_Complete_12PlusPop_Pct_UR_Equity numeric,
+Series_Complete_18PlusPop_Pct_UR_Equity numeric,
+Series_Complete_65PlusPop_Pct_UR_Equity numeric,
+Booster_Doses_Vax_Pct_SVI numeric,
+Booster_Doses_12PlusVax_Pct_SVI numeric,
+Booster_Doses_18PlusVax_Pct_SVI numeric,
+Booster_Doses_65PlusVax_Pct_SVI numeric,
+Booster_Doses_Vax_Pct_UR_Equity numeric,
+Booster_Doses_12PlusVax_Pct_UR_Equity numeric,
+Booster_Doses_18PlusVax_Pct_UR_Equity numeric,
+Booster_Doses_65PlusVax_Pct_UR_Equity numeric,
+Census2019 numeric,
+Census2019_5PlusPop numeric,
+Census2019_5to17Pop numeric,
+Census2019_12PlusPop numeric,
+Census2019_18PlusPop numeric,
+Census2019_65PlusPop numeric
+);
+
+COPY temp_vaccinations
+FROM '/Users/thomas/Documents/School/INST123/Team Project/COVID-19_Vaccinations_in_the_United_States_County.csv'
+WITH (FORMAT CSV, HEADER)
+
+SELECT 	
+Date AS date,
+Recip_County AS county,
+Recip_State AS state,
+FIPS AS fips,
+Completeness_pct,
+Administered_Dose1_Recip,
+Administered_Dose1_Pop_Pct,
+Administered_Dose1_Recip_5PlusPop_Pct,
+Administered_Dose1_Recip_12PlusPop_Pct,
+Administered_Dose1_Recip_18PlusPop_Pct,
+Administered_Dose1_Recip_65PlusPop_Pct,
+Series_Complete_Yes,
+Series_Complete_Pop_Pct,
+Series_Complete_5PlusPop_Pct,
+Series_Complete_5to17Pop_Pct,
+Series_Complete_12PlusPop_Pct,
+Series_Complete_18PlusPop_Pct,
+Series_Complete_65PlusPop_Pct,
+Booster_Doses,
+Booster_Doses_Vax_Pct
+INTO COVID_19_vaccinations
+FROM temp_vaccinations
+;
+SELECT * FROM COVID_19_vaccinations
+
+DROP TABLE vaccs_temp;
+SELECT
+Recip_County,
+Recip_State,
+FIPS,
+Metro_status,
+Census2019
+INTO TEMPORARY vaccs_temp
+FROM temp_vaccinations
+WHERE date = '11-13-2021';
+
+SELECT * FROM vaccs_temp
+_________________________________________________________________________________________________________________________
+-- Import and append demographic data
+-- obesity and life expectancy statistics
+CREATE TEMPORARY TABLE temp_demographic (
+State varchar(30),
+County varchar(50),
+male_obs_2011_pct numeric,
+fem_obs_2011_pct numeric,
+male_life_2010 numeric,
+fem_life_2010 numeric
+);
+
+SELECT * FROM temp_demographic
+
+COPY temp_demographic
+FROM '/Users/thomas/Documents/School/INST123/Team Project/IHME_physicalAct.csv'
+WITH (FORMAT CSV, HEADER)
+
+-- economic characteristics
+
+CREATE TEMPORARY TABLE temp_demographic1 (
+	county varchar(50),
+	state varchar(30),
+	per_cap_inc numeric,
+	median_house_inc numeric,
+	median_fam_inc numeric,
+	population numeric,
+	num_of_households numeric
+	);
+
+COPY temp_demographic1
+FROM '/Users/thomas/Documents/School/INST123/Team Project/census_2013_2017_county_inc.csv'
+WITH (FORMAT CSV, HEADER, ENCODING 'windows-1251')
+
+SELECT * FROM temp_demographic1
+
+-- SELECT * FROM temp_demographic1
+_________________________________________________________________________________________________________________________
+-- IMPORT CROSSWALK
+DROP TABLE crosswalk;
+CREATE TEMPORARY TABLE crosswalk (
+	sname varchar(30),
+	sab varchar(2),
+	sid varchar(10),
+	sfips varchar(2),
+	cname varchar(70),
+	saint varchar(50),
+	cfips varchar(50),
+	fips varchar(10)
+);
+
+COPY crosswalk
+FROM '/Users/thomas/Documents/School/INST123/Team Project/crosswalk.csv'
+WITH (FORMAT CSV, HEADER);
+
+UPDATE crosswalk
+SET fips = '0' || fips
+WHERE sab IN ('AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT') AND length(fips) = 4;
+
+SELECT * FROM crosswalk
+_________________________________________________________________________________________________________________________
+-- JOIN temp_demographic tables with crosswalk
+DROP TABLE temp_demographic_fips;
+SELECT
+	A.State,
+	A.County,
+	A.male_obs_2011_pct,
+	A.fem_obs_2011_pct,
+	A.male_life_2010,
+	A.fem_life_2010,
+	B.sname,
+	B.cname,
+	B.fips
+INTO TEMPORARY temp_demographic_fips	
+FROM temp_demographic AS A
+LEFT JOIN crosswalk AS B ON
+A.County ILIKE B.cname AND A.State ILIKE B.sname
+WHERE fips IS NOT NULL;
+
+-- Remove duplicate fips codes
+SELECT DISTINCT fips, State, County, male_obs_2011_pct,fem_obs_2011_pct,male_life_2010,fem_life_2010 
+INTO TEMPORARY temp_demographic_nodups
+FROM temp_demographic_fips
+
+SELECT * FROM temp_demographic_nodups
+ORDER BY county ASC;
+
+UPDATE temp_demographic_nodups
+	SET fips = 51019
+	WHERE state = 'Virginia' AND county = 'Bedford';
+	
+UPDATE temp_demographic_nodups
+	SET fips = 51059
+	WHERE state = 'Virginia' AND county = 'Fairfax';
+	
+UPDATE temp_demographic_nodups
+	SET fips = 51067
+	WHERE state = 'Virginia' AND county = 'Franklin';
+	
+UPDATE temp_demographic_nodups
+	SET fips = 51159
+	WHERE state = 'Virginia' AND county = 'Richmond';
+	
+UPDATE temp_demographic_nodups
+	SET fips = 51161
+	WHERE state = 'Virginia' AND county = 'Roanoke';
+	
+UPDATE temp_demographic_nodups
+	SET fips = 24005
+	WHERE state = 'Maryland' AND county = 'Baltimore';
+	
+
+-- SELECT state, county, count(*) AS caden
+-- FROM temp_demographic_fips
+-- GROUP BY state, county
+-- ORDER BY caden ASC;
+
+-- SELECT * FROM temp_demographic_fips
+-- ORDER BY fips DESC;
+_________________________________________________________________________________________________________________________
+-- JOIN temp_demographic1 tables with crosswalk
+SELECT * FROM temp_demographic1
+
+DELETE FROM temp_demographic1_fips WHERE state = 'Puerto Rico';
+
+DROP TABLE temp_demographic1_fips;
+SELECT
+	A.county,
+	A.state,
+	A.per_cap_inc,
+	A.median_house_inc,
+	A.median_fam_inc,
+	A.population,
+	A.num_of_households,
+	B.sname,
+	B.cname,
+	B.fips
+INTO TEMPORARY temp_demographic1_fips	
+FROM temp_demographic1 AS A
+LEFT JOIN crosswalk AS B ON
+A.county ILIKE B.cname AND A.state ILIKE B.sname
+WHERE state != 'Puerto Rico' 
+AND state != 'U.S. Virgin Islands' 
+AND state != 'Guam' 
+AND state != 'American Samoa' 
+AND state != 'Northern Mariana Islands'
+AND state != 'Alaska'
+AND county IS NOT NULL;
+
+SELECT * FROM temp_demographic1_fips
+ORDER BY fips DESC;
+
+-- Remove duplicate fips codes
+SELECT DISTINCT fips, county, state, per_cap_inc, median_house_inc, median_fam_inc, population, num_of_households
+INTO TEMPORARY temp_demographic1_nodups
+FROM temp_demographic1_fips;
+
+UPDATE temp_demographic1_nodups
+	SET fips = 51750
+	WHERE state = 'Virginia' AND county = 'Radford City';
+	
+UPDATE temp_demographic1_nodups
+	SET fips = 24033
+	WHERE state = 'Maryland' AND county = 'Prince George''s';
+	
+UPDATE temp_demographic1_nodups
+	SET fips = 24035
+	WHERE state = 'Maryland' AND county = 'Queen Anne''s';
+	
+UPDATE temp_demographic1_nodups
+	SET fips = 11001
+	WHERE state = 'District of Columbia' AND county = 'Washington City';
+	
+UPDATE temp_demographic1_nodups
+	SET fips = 35013
+	WHERE state = 'New Mexico' AND county = 'Doca Ana';
+	
+UPDATE temp_demographic1_nodups
+	SET fips = 24037
+	WHERE state = 'Maryland' AND county = 'St. Mary''s';
+	
+SELECT * FROM temp_demographic1_nodups
+ORDER BY fips DESC;
+_________________________________________________________________________________________________________________________
+-- JOIN all demographic temp tables
+
+SELECT 
+	A.fips,
+	A.county,
+	A.state,
+	A.per_cap_inc,
+	A.median_house_inc,
+	A.median_fam_inc,
+	A.population,
+	A.num_of_households,
+	B.male_obs_2011_pct,
+	B.fem_obs_2011_pct,
+	B.male_life_2010,
+	B.fem_life_2010
+INTO TEMPORARY temp_combined_demographic	
+FROM temp_demographic1_nodups AS A
+LEFT JOIN temp_demographic_nodups AS B ON
+A.fips = B.fips;
+
+SELECT * FROM temp_combined_demographic;
+_________________________________________________________________________________________________________________________
+
+DROP TABLE temp_county_demographic_full
+SELECT 
+	A.fips,
+	A.county,
+	A.state,
+	A.per_cap_inc,
+	A.median_house_inc,
+	A.median_fam_inc,
+	A.population,
+	A.num_of_households,
+	A.male_obs_2011_pct,
+	A.fem_obs_2011_pct,
+	A.male_life_2010,
+	A.fem_life_2010,
+	B.Metro_status
+INTO TEMPORARY temp_county_demographic_full
+FROM temp_combined_demographic AS A
+LEFT JOIN vaccs_temp AS B ON 
+A.fips = B.fips;
+
+SELECT * 
+INTO county_demographic_final
+FROM temp_county_demographic_full;
+
+SELECT * FROM county_demographic_final;
+
+-- Dataset Cleaning 
+
+SELECT * FROM county_demographic_final
+WHERE fips IS NULL;
+-- SELECT * FROM county_demographic_final
+-- WHERE fips IS NULL
+-- OR state IS NULL
+-- OR county IS NULL
+-- OR per_cap_inc IS NULL
+-- OR median_house_inc IS NULL
+-- OR median_fam_inc IS NULL
+-- OR population IS NULL
+-- OR num_of_households IS NULL
+-- OR male_obs_2011_pct IS NULL
+-- OR fem_obs_2011_pct IS NULL
+-- OR male_life_2010 IS NULL
+-- OR fem_life_2010 IS NULL
+-- OR Metro_status IS NULL
+-- ;
+
+
+DELETE FROM county_demographic_final
+WHERE fips IS NULL
+OR state IS NULL
+OR county IS NULL
+OR per_cap_inc IS NULL
+OR median_house_inc IS NULL
+OR median_fam_inc IS NULL
+OR population IS NULL
+OR num_of_households IS NULL
+OR male_obs_2011_pct IS NULL
+OR fem_obs_2011_pct IS NULL
+OR male_life_2010 IS NULL
+OR fem_life_2010 IS NULL
+OR Metro_status IS NULL
+;
+-- Dropped 6 obeservations with null values from county_demographic_final
+
+SELECT * FROM covid_19_cases_and_deaths_2020_2022
+WHERE date IS NULL
+OR county IS NULL
+OR state IS NULL
+OR fips IS NULL
+OR cases IS NULL
+OR deaths IS NULL
+ORDER BY county ASC;
+
+SELECT DISTINCT county FROM covid_19_cases_and_deaths_2020_2022
+WHERE state = 'New York'
+ORDER BY county ASC;
+
+DELETE FROM covid_19_cases_and_deaths_2020_2022
+WHERE date IS NULL
+OR county IS NULL
+OR state IS NULL
+OR fips IS NULL
+OR cases IS NULL
+OR deaths IS NULL;
+
+-- Deleted 77,589 observations, included Puerto Rico, Joplin MO, Kansas City, MO, New York City, NY(because NYC does not have a county fips code), and all data that wasn't classified as being from a distinct county and denoted as "unknown" county
+
+SELECT * FROM covid_19_vaccinations;
+
+SELECT * FROM covid_19_vaccinations
+WHERE date IS NULL
+OR county = 'Unknown County'
+OR state = 'AK'
+OR state = 'AS'
+OR state = 'FM'
+OR state = 'GU'
+OR state = 'MH'
+OR state = 'MP'
+OR state = 'PR'
+OR state = 'PW'
+OR state = 'VI'
+OR state = 'UNK'
+OR county IS NULL
+OR state IS NULL
+OR fips IS NULL
+;
+
+DELETE FROM covid_19_vaccinations
+WHERE date IS NULL
+OR county = 'Unknown County'
+OR state = 'AK'
+OR state = 'AS'
+OR state = 'FM'
+OR state = 'GU'
+OR state = 'MH'
+OR state = 'MP'
+OR state = 'PR'
+OR state = 'PW'
+OR state = 'VI'
+OR state = 'UNK'
+OR county IS NULL
+OR state IS NULL
+OR fips IS NULL
+
+SELECT * FROM covid_19_vaccinations
+
+ALTER TABLE covid_19_vaccinations
+DROP COLUMN administered_dose1_recip;
+
+ALTER TABLE covid_19_vaccinations
+DROP COLUMN Administered_dose1_pop_pct;
+
+ALTER TABLE covid_19_vaccinations
+DROP COLUMN Administered_dose1_recip_5pluspop_pct;
+
+ALTER TABLE covid_19_vaccinations
+DROP COLUMN Administered_Dose1_Recip_12PlusPop_Pct;
+
+ALTER TABLE covid_19_vaccinations
+DROP COLUMN Administered_Dose1_Recip_18PlusPop_Pct;
+
+ALTER TABLE covid_19_vaccinations
+DROP COLUMN Administered_Dose1_Recip_65PlusPop_Pct;
+
+ALTER TABLE covid_19_vaccinations
+DROP COLUMN Series_Complete_5PlusPop_Pct;
+
+ALTER TABLE covid_19_vaccinations
+DROP COLUMN Series_Complete_5to17Pop_Pct;
+
+ALTER TABLE covid_19_vaccinations
+DROP COLUMN Series_Complete_12PlusPop_Pct;
+
+ALTER TABLE covid_19_vaccinations
+DROP COLUMN Series_Complete_18PlusPop_Pct;
+
+ALTER TABLE covid_19_vaccinations
+DROP COLUMN Series_Complete_65PlusPop_Pct;
+
+SELECT * FROM covid_19_vaccinations
+
+-- Dropped AK, territories, unknown counties, 
+-- Dropped age columns, and 1st dose columns
+-- NULL values are present in booster columns 
+
+
+SELECT state,
+AVG(CASE 
+		WHEN metro_status = 'Metro' THEN 1
+		ELSE 0
+	END) 
+AS pct_metro
+FROM county_demographic_final
+GROUP BY state
+ORDER BY pct_metro;
+
+-- Limit tables to Oklahoma, Pennsylvania, FLorida, Oregon
+SELECT * FROM covid_19_vaccinations;
+DELETE FROM covid_19_vaccinations
+WHERE state != 'OK'
+AND state != 'OR'
+AND state != 'PA'
+AND state != 'FL';
+
+SELECT DISTINCT state FROM covid_19_cases_and_deaths_2020_2022
+ORDER BY state;
+DELETE FROM covid_19_cases_and_deaths_2020_2022
+WHERE state != 'Oklahoma'
+AND state != 'Oregon'
+AND state != 'Pennsylvania'
+AND state != 'Florida';
+
+SELECT * FROM county_demographic_final;
+DELETE FROM county_demographic_final
+WHERE state != 'Oklahoma'
+AND state != 'Oregon'
+AND state != 'Pennsylvania'
+AND state != 'Florida';
