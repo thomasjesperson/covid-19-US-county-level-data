@@ -1,5 +1,8 @@
 # covid-19-US-county-level-data
 This repository combines infectious disease data (COVID-19 cases, deaths, vaccinations) with county-level characteristics (income, demographics, comorbidities)
+# Data
+## COVID-19
+These data come from [NY Times covid-19 data project](https://github.com/nytimes/covid-19-data) that provided cumulative state and county-level covid-19 data from 2020-2023. These data include cases, deaths, and hospitalizations. This project also includes a supplemental survey that reports county-level mask-wearing behavior, and supplemental data for colleges and prisons.
 # Tips for working with this repository
 There are a few data files in this repository that exceed github's size limit. If you are making changes to these files, you will need to install the Git Large File Storage before you can push changes to the main branch. Install instructions can be found here: [Git Large File Storage Install Instructions](https://docs.github.com/en/repositories/working-with-files/managing-large-files/installing-git-large-file-storage)
 ## Pushing changes to large files
