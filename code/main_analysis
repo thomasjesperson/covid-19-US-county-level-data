@@ -1,0 +1,64 @@
+-- query 1, pct of sample that is metro area
+SELECT state, ROUND(AVG(CASE WHEN metro_status = 'Metro' THEN 1 ELSE 0 END)*100, 2) AS pct_metro
+FROM county_demographic_final
+GROUP BY state
+ORDER BY pct_metro;
+
+-- query 2, avg vax for each state metro vs non-metro
+SELECT B.state, B.metro_status,
+	ROUND(SUM(A.series_complete_pop_pct*B.population)/SUM(population), 2) AS weighted_avg_vax_metro_nonmetro,
+	MAX(A.series_complete_pop_pct) AS max_pct_vaxxed,
+	MIN(A.series_complete_pop_pct) AS min_pct_vaxxed
+FROM covid_19_vaccinations AS A
+LEFT JOIN county_demographic_final AS B
+ON A.fips = B.fips
+WHERE date = '2022-04-13'
+GROUP BY B.state, B.metro_status;
+
+
+--query 3
+SELECT B.state,
+	ROUND(SUM(CASE WHEN B.male_obs_2011_pct >= A.avg_obs THEN B.cases ELSE 0 END) / 
+	SUM(B.cases)*100, 2) AS pct_cases_obesity_above_avg,
+	ROUND(SUM(CASE WHEN B.male_obs_2011_pct >= A.avg_obs THEN B.deaths ELSE 0 END) / 
+	SUM(B.deaths)*100, 2) AS pct_deaths_obesity_above_avg,
+  SUM(B.deaths) AS total_state_deaths
+FROM(
+	SELECT A.state, A.deaths, A.cases, B.male_obs_2011_pct
+	FROM covid_19_cases_and_deaths_2020_2022 AS A
+	LEFT JOIN county_demographic_final AS B
+	ON A.fips = B.fips) AS B
+LEFT JOIN(
+	SELECT state,
+		AVG(male_obs_2011_pct) AS avg_obs
+	FROM county_demographic_final
+	GROUP BY state) AS A
+ON A.state = B.state
+GROUP BY B.state;
+
+--query 4
+SELECT A.state, A.county, A.fips, ROUND(AVG(B.median_house_inc),0) AS median_house_inc,
+	ROUND(SUM(A.cases/B.population)*100, 2) AS pct_covid_postVax_preDelta, 
+	ROUND(SUM(A.deaths/B.population)*100, 2) AS pct_deaths_postVax_preDelta, 
+	ROUND(AVG(series_complete_pop_pct), 2) AS avg_vax_pct
+FROM covid_19_cases_and_deaths_2020_2022 AS A
+LEFT JOIN (SELECT A.fips, A.date, A.series_complete_pop_pct,
+		   B.population, B.median_house_inc
+		   FROM covid_19_vaccinations AS A
+		   LEFT JOIN county_demographic_final AS B
+		   ON A.fips = B.fips
+		  ) AS B
+ON A.fips = B.fips AND A.date = B.date
+WHERE (A.date BETWEEN '2020-12-11' AND '2021-07-07') AND A.state = 'Florida' 
+--BTWN WHEN VACCINES AVAILABLE, AND DELTA BECAME DOMINANT
+GROUP BY A.state, A.county, A.fips
+ORDER BY pct_deaths_postVax_preDelta DESC
+limit 10;
+
+--query 5
+SELECT avg(populationToNumberDosesCorrelation)::Numeric(10,4) as "Average correlation between per capita income and vaccine %" FROM
+(SELECT date, corr(county_demographic_final.per_cap_inc, vaccs.series_complete_pop_pct) as populationToNumberDosesCorrelation
+FROM (
+	(SELECT * FROM covid_19_vaccinations WHERE date > '2021-02-01') as vaccs
+	 FULL JOIN county_demographic_final on vaccs.fips = county_demographic_final.fips
+) GROUP BY date) as mega
